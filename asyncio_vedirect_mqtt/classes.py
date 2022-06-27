@@ -13,7 +13,7 @@ class AsyncIOVeDirect(VedirectSync):
         super(AsyncIOVeDirect, self).__init__(serialport, timeout)
         self.ser = aioserial.AioSerial(port=serialport, timeout=timeout, baudrate=19200)
 
-    async def async_read_data_single(self):
+    async def read_data_single(self):
         while True:
             data = await self.ser.read_async()
             for single_byte in data:
@@ -21,7 +21,7 @@ class AsyncIOVeDirect(VedirectSync):
                 if (packet != None):
                     return packet
 
-    async def async_read_data_callback(self, callbackFunction):
+    async def read_data_callback(self, callbackFunction):
         while True:
             data = await self.ser.read_async()
             for byte in data:
@@ -50,7 +50,7 @@ class AsyncIOVeDirectMqtt:
                           password=self.password) as client:
             logger.info("Starting loop")
             while True:
-                ve_data = await self.ve_connection.async_read_data_single()
+                ve_data = await self.ve_connection.read_data_single()
                 logger.info("Got serial data")
                 await client.publish("test/test", payload=ve_data, qos=2, retain=False)
                 logger.info("Published serial data")
