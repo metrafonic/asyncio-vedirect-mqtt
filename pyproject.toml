@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "asyncio-vedirect-mqtt"
+version = "0.1.0"
+description = ""
+authors = ["Mathias Hedberg <mathias@hedberg.io>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+asyncio-mqtt = "^0.12.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+ve-mqtt = 'asyncio_vedirect_mqtt.__main__:main'
