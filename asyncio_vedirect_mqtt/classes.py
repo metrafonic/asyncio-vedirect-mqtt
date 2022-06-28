@@ -31,10 +31,10 @@ class AsyncIOVeDirect(VedirectSync):
 
 
 class AsyncIOVeDirectMqtt:
-    def __init__(self, tty, name, broker, *args, tls_protocol=None, port=1883, username=None, password=None, verbose=False, timeout=60,
+    def __init__(self, tty, topic, broker, *args, tls_protocol=None, port=1883, username=None, password=None, verbose=False, timeout=60,
                  ca_path=None, **kwargs):
         self.tty = tty
-        self.name = name
+        self.topic = topic
         self.broker = broker
         self.port = int(port)
         self.username = username
@@ -51,7 +51,5 @@ class AsyncIOVeDirectMqtt:
             logger.info("Starting loop")
             while True:
                 ve_data = await self.ve_connection.read_data_single()
-                logger.info("Got serial data")
-                await client.publish("test/test", payload=ve_data, qos=2, retain=False)
-                logger.info("Published serial data")
-                await asyncio.sleep(10)
+                await client.publish(self.topic, payload=json.dumps(ve_data), qos=2, retain=False)
+                logger.debug(ve_data)

@@ -14,8 +14,8 @@ logger.addHandler(ch)
 
 def main():
     parser = argparse.ArgumentParser(description="Async implementation of ve.direct to mqtt")
-    parser.add_argument('--tty', help='Serial port', required=True)
-    parser.add_argument('--name', help='MQTT device Identifier', required=True)
+    parser.add_argument('--tty', help='Serial port with incloming ve.direct data', required=True)
+    parser.add_argument('--topic', help='MQTT topic to publish to', required=True)
     parser.add_argument('-v', '--verbose', action='store_true', help='Run with verbose logging')
     parser.add_argument('--timeout', help='Serial port read timeout', type=int, default='60')
     parser.add_argument('--broker', help='MQTT broker hostname', type=str, required=True)
@@ -31,7 +31,7 @@ def main():
         global formatter
         ch.setLevel(logging.DEBUG)
     logger.debug(args)
-    asyncio.run(AsyncIOVeDirectMqtt(**vars(args)).run())
+    asyncio.run(AsyncIOVeDirectMqtt(**vars(args)).run(), debug=True)
 
 if __name__ == "__main__":
     main()
