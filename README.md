@@ -42,6 +42,6 @@ optional arguments:
 ```
 
 ## Credits
-- [changyuheng/aioserial](https://github.com/changyuheng/aioserial) for te async serial implementation
-- [karioja/vedirect](https://github.com/karioja/vedirect) for the decoding of ve.direct and the example test file
-- [sbtinstruments/asyncio-mqtt](https://github.com/sbtinstruments/asyncio-mqtt) for the async mqtt implementation
+- [changyuheng/aioserial](https://github.com/changyuheng/aioserial) - async serial implementation
+- [karioja/vedirect](https://github.com/karioja/vedirect) - decoding of ve.direct and the example test file
+- [sbtinstruments/asyncio-mqtt](https://github.com/sbtinstruments/asyncio-mqtt) async mqtt implementation
