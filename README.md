@@ -13,7 +13,7 @@ The implementation supports TLS and authentication when connecting to the MQTT s
 
 Download from git with pip
 ```commandline
-pip3 install https://github.com/metrafonic/asyncio-vedirect-mqtt.git
+pip3 install git+https://github.com/metrafonic/asyncio-vedirect-mqtt.git
 ```
 This will add the `ve-mqtt` executable to `~/.local/bin`.
 
