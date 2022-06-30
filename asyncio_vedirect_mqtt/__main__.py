@@ -3,16 +3,16 @@ import asyncio
 import ssl
 import logging
 
-from . import AsyncIOVeDirectMqtt
+from . import AsyncIOVeDirectMqtt, __version__ as package_version
 
 logger = logging.getLogger(__package__)
 logger.setLevel(logging.DEBUG)
-formatter = logging.Formatter('[%(levelname)8s] - %(message)s')
 ch = logging.StreamHandler()
 ch.setLevel(logging.INFO)
 logger.addHandler(ch)
 
 def main():
+    logger.info(f"Welcome to {__package__} v{package_version}" )
     parser = argparse.ArgumentParser(description="Async implementation of ve.direct to mqtt")
     parser.add_argument('--tty', help='Serial port with incloming ve.direct data', required=True)
     parser.add_argument('--topic', help='MQTT topic to publish to', required=True)
@@ -28,10 +28,11 @@ def main():
 
     args = parser.parse_args()
     if args.verbose:
-        global formatter
         ch.setLevel(logging.DEBUG)
+        ch.setFormatter(logging.Formatter('%(levelname)8s - %(message)s'))
+        logger.debug("Verbose logging enabled")
     logger.debug(args)
-    asyncio.run(AsyncIOVeDirectMqtt(**vars(args)).run(), debug=True)
+    asyncio.run(AsyncIOVeDirectMqtt(**vars(args)).run(), debug=bool(args.verbose))
 
 if __name__ == "__main__":
     main()

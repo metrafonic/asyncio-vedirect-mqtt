@@ -5,6 +5,7 @@ import json
 import aioserial
 from vedirect import Vedirect as VedirectSync
 import logging
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -45,11 +46,19 @@ class AsyncIOVeDirectMqtt:
         if ca_path and self.ssl_context:
             self.ssl_context.load_verify_locations(capath=ca_path)
 
+    async def publish_data(self, client, data):
+        logger.debug('Publishing to MQTT server')
+        start_time = time.monotonic_ns()
+        await client.publish(self.topic, payload=json.dumps(data), qos=2, retain=False)
+        logger.debug(f'Publish took {time.monotonic_ns() - start_time}ns')
+
+
     async def run(self):
+        logger.info(f"Connecting to {self.broker}:{self.port}")
         async with Client(hostname=self.broker, port=self.port, tls_context=self.ssl_context, username=self.username,
                           password=self.password) as client:
-            logger.info("Starting loop")
+            logger.info(f"Listening for data on {self.tty}")
             while True:
                 ve_data = await self.ve_connection.read_data_single()
-                await client.publish(self.topic, payload=json.dumps(ve_data), qos=2, retain=False)
+                asyncio.create_task(self.publish_data(client, ve_data))
                 logger.debug(ve_data)

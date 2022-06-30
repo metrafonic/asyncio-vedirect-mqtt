@@ -41,6 +41,15 @@ optional arguments:
 
 ```
 
+### Sending test data:
+```commandline
+socat -d -d PTY,raw,echo=0,link=/tmp/vmodem0 PTY,raw,echo=0,link=/tmp/vmodem1
+```
+```commandline
+cat tests/smartsolar_1.39.dump > /tmp/vmodem0
+```
+Data will now be available at `/tmp/vmodem1`
+
 ## Credits
 - [changyuheng/aioserial](https://github.com/changyuheng/aioserial) - async serial implementation
 - [karioja/vedirect](https://github.com/karioja/vedirect) - decoding of ve.direct and the example test file
