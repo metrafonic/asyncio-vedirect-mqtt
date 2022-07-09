@@ -10,6 +10,7 @@ class Device(dict):
     def __init__(self, name, model, manufacturer, sw_version='1.0', device_id=None):
         super().__init__()
         self.device_id = re.sub('[^0-9a-zA-Z]+', '_', device_id if device_id else name).lower()
+        self.name = name
         self['name'] = name
         self['sw_version'] = sw_version
         self['model'] = model
@@ -29,7 +30,7 @@ class Sensor:
         self.discovery_attributes = {
             "schema": "json",
             'platform': 'mqtt',
-            'name': name,
+            'name': f"{self.parent_device.name} {name}",
             'state_topic': self.state_topic,
             'device': dict(self.parent_device),
             'unique_id': f"{self.parent_device.device_id}_{self.sensor_id}"
