@@ -111,7 +111,7 @@ class AsyncIOVeDirectMqtt:
     async def publish_data(self, data):
         for key, value in data.items():
             if key in self.sensor_mapping.keys():
-                asyncio.create_task(self.sensor_mapping[key].send(value))
+                await self.sensor_mapping[key].send(value)
 
     async def run(self):
         logger.info(f"Initiating connection to broker ({self.broker}:{self.port} {self.ssl_context=})")
@@ -122,5 +122,4 @@ class AsyncIOVeDirectMqtt:
             logger.info(f"Listening for ve.direct data on {self.tty}")
             while True:
                 ve_data = await self.ve_connection.read_data_single()
-                asyncio.create_task(self.publish_data(ve_data))
-                #logger.debug(ve_data)
+                asyncio.create_task(self.publish_data(ve_data), name='publish_data')
