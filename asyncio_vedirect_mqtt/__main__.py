@@ -14,7 +14,7 @@ logger.addHandler(ch)
 def main():
     logger.info(f"Welcome to {__package__} v{package_version}" )
     parser = argparse.ArgumentParser(description="Async implementation of ve.direct to mqtt")
-    parser.add_argument('--tty', help='Serial port with incloming ve.direct data', required=True)
+    parser.add_argument('--tty', help='Serial port with incoming ve.direct data', required=True)
     parser.add_argument('--device', help='Unique name of the device', required=True)
     parser.add_argument('-v', '--verbose', action='store_true', help='Run with verbose logging')
     parser.add_argument('--timeout', help='Serial port read timeout', type=int, default='60')
