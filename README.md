@@ -14,11 +14,13 @@ broker of your choice via [sbtinstruments/asyncio-mqtt](https://github.com/sbtin
 The implementation supports TLS and authentication when connecting to the MQTT server.
 
 ## Getting started:
-
-Download from git with pip
+Install the latest wheel package from the [releases](https://github.com/metrafonic/asyncio-vedirect-mqtt/releases/latest) tab or
+download from git with pip.
 ```commandline
 pip3 install git+https://github.com/metrafonic/asyncio-vedirect-mqtt.git
 ```
+NOTE: Installing the pre-build wheel (as opposed to git install via pip) is recommended as it saves a significant amount of space.
+
 This will add the `ve-mqtt` executable to `~/.local/bin`.
 
 ### Run the code:
@@ -47,7 +49,32 @@ options:
 
 ```
 
-### Sending test data:
+## System service
+Add the following to `/lib/systemd/system/ve-mqtt.service`:
+Remember to replace the arguments with your own variables
+```text
+[Unit]
+Description=VE.Direct over MQTT
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=ve-mqtt --device Mobile-1 --tty /dev/ttyAMA0 --broker xxxxx --port 8883 --username mqtt --password xxxxxxxxxx --tls
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
+```
+Reload and start the service:
+```commandline
+sudo systemctl daemon-reload
+sudo systemctl enable ve-mqtt
+sudo systemctl start ve-mqtt
+```
+
+## Development:
+Sending test data is easy using socat:
 ```commandline
 socat -d -d PTY,raw,echo=0,link=/tmp/vmodem0 PTY,raw,echo=0,link=/tmp/vmodem1
 ```
