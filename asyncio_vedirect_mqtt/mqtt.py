@@ -1,5 +1,5 @@
 import asyncio
-from asyncio_mqtt import Client
+from asyncio_mqtt import Client, MqttError
 import ssl
 import json
 from asyncio_vedirect_mqtt.victron import AsyncIOVeDirect
@@ -19,6 +19,7 @@ class AsyncIOVeDirectMqtt:
         self.username = username
         self.password = password
         self.verbose = verbose
+        self.mqtt_exception = None
         self.ve_connection = AsyncIOVeDirect(tty, timeout)
         self.ssl_context = ssl.SSLContext(tls_protocol) if tls_protocol else None
         if ca_path and self.ssl_context:
@@ -111,15 +112,27 @@ class AsyncIOVeDirectMqtt:
     async def publish_data(self, data):
         for key, value in data.items():
             if key in self.sensor_mapping.keys():
-                await self.sensor_mapping[key].send(value)
+                try:
+                    await self.sensor_mapping[key].send(value)
+                except MqttError:
+                    self.mqtt_exception = MqttError
 
     async def run(self):
-        logger.info(f"Initiating connection to broker ({self.broker}:{self.port} {self.ssl_context=})")
-        async with Client(hostname=self.broker, port=self.port, tls_context=self.ssl_context, username=self.username,
-                          password=self.password) as client:
-            logger.info("Connection to broker successful")
-            await self.setup_sensors(client)
-            logger.info(f"Listening for ve.direct data on {self.tty}")
-            while True:
-                ve_data = await self.ve_connection.read_data_single()
-                asyncio.create_task(self.publish_data(ve_data), name='publish_data')
+        reconnect_interval = 5  # In seconds
+        while True:
+            try:
+                logger.info(f"Initiating connection to broker ({self.broker}:{self.port} {self.ssl_context=})")
+                async with Client(hostname=self.broker, port=self.port, tls_context=self.ssl_context, username=self.username,
+                                  password=self.password) as client:
+                    logger.info("Connection to broker successful")
+                    await self.setup_sensors(client)
+                    logger.info(f"Listening for ve.direct data on {self.tty}")
+                    while True:
+                        if self.mqtt_exception:
+                            raise self.mqtt_exception
+                        ve_data = await self.ve_connection.read_data_single()
+                        asyncio.create_task(self.publish_data(ve_data), name='publish_data')
+            except MqttError as error:
+                self.mqtt_exception = None
+                logger.error(f'Error "{error}". Reconnecting in {reconnect_interval} seconds.')
+                await asyncio.sleep(reconnect_interval)
