@@ -10,7 +10,7 @@ import time
 logger = logging.getLogger(__name__)
 
 class AsyncIOVeDirectMqtt:
-    def __init__(self, tty, device, broker, *args, tls_protocol=None, port=1883, username=None, password=None, verbose=False, timeout=60,
+    def __init__(self, tty, device, broker, *args, tls_protocol=None, port=1883, username=None, password=None, mqttretry=30, verbose=False, timeout=60,
                  ca_path=None, **kwargs):
         self.tty = tty
         self.device_name = device
@@ -18,6 +18,7 @@ class AsyncIOVeDirectMqtt:
         self.port = int(port)
         self.username = username
         self.password = password
+        self.mqttretry = mqttretry
         self.verbose = verbose
         self.mqtt_exception = None
         self.ve_connection = AsyncIOVeDirect(tty, timeout)
@@ -118,7 +119,6 @@ class AsyncIOVeDirectMqtt:
                     self.mqtt_exception = MqttError
 
     async def run(self):
-        reconnect_interval = 5  # In seconds
         while True:
             try:
                 logger.info(f"Initiating connection to broker ({self.broker}:{self.port} {self.ssl_context=})")
@@ -134,5 +134,5 @@ class AsyncIOVeDirectMqtt:
                         asyncio.create_task(self.publish_data(ve_data), name='publish_data')
             except MqttError as error:
                 self.mqtt_exception = None
-                logger.error(f'Error "{error}". Reconnecting in {reconnect_interval} seconds.')
-                await asyncio.sleep(reconnect_interval)
+                logger.error(f'Error "{error}". Reconnecting in {self.mqttretry} seconds.')
+                await asyncio.sleep(self.mqttretry)

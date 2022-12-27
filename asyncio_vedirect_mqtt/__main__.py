@@ -22,6 +22,7 @@ def main():
     parser.add_argument('--port', help='MQTT broker port', type=int, default=1883)
     parser.add_argument('--username', help='MQTT broker username', default=None)
     parser.add_argument('--password', help='MQTT broker password', default=None)
+    parser.add_argument('--mqttretry', help='MQTT broker reconnect timeout interval', type=int, default=30)
     parser.add_argument('--tls', dest='tls_protocol', help='Use TLS for MQTT communication', action='store_const', default=None, const=ssl.PROTOCOL_TLS)
     parser.add_argument('--tls1.2', dest='tls_protocol', help='Use TLS version 1.2 for MQTT communication', action='store_const', default=None, const=ssl.PROTOCOL_TLSv1_2)
     parser.add_argument('--ca_path', help='Custom TLS CA path', default=None)
