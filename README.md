@@ -52,13 +52,15 @@ options:
 
 ## System service
 Add the following to `/lib/systemd/system/ve-mqtt.service`:
-Remember to replace the arguments with your own variables
+
 ```text
 [Unit]
 Description=VE.Direct over MQTT
 After=multi-user.target
 
 [Service]
+User=pi
+Group=pi
 Type=simple
 ExecStart=ve-mqtt --device Mobile-1 --tty /dev/ttyAMA0 --broker xxxxx --port 8883 --username mqtt --password xxxxxxxxxx --tls
 Restart=on-failure
@@ -67,6 +69,11 @@ RestartSec=5s
 [Install]
 WantedBy=multi-user.target
 ```
+
+**Remember to replace the arguments with your own variables.** 
+
+Also replace the username and group in the `[Service]` section to the user that installed and is capable of running the ve-direct software
+
 Reload and start the service:
 ```commandline
 sudo systemctl daemon-reload
