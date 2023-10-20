@@ -5,7 +5,7 @@ to an mqtt broker in an asynchronous manner.
 
 The data is published according to the [Home Assistant MQTT Discovery specification](https://www.home-assistant.io/docs/mqtt/discovery/). This allows the device to be auto-discovered in home assistant.
 
-Currently the program is set up for use with SmartSolar devices. Adding more devices is possible (pull requests accepted).
+Currently, the program is set up for use with SmartSolar devices. Adding more devices is possible (pull requests accepted).
 
 This is done using [changyuheng/aioserial](https://github.com/changyuheng/aioserial) to read the serial data and passing it through 
 to an async implementation of [karioja/vedirect](https://github.com/karioja/vedirect) to decode the data. This is then sent over MQTT to a 
@@ -19,35 +19,35 @@ download from git with pip.
 ```commandline
 pip3 install git+https://github.com/metrafonic/asyncio-vedirect-mqtt.git
 ```
-NOTE: Installing the pre-build wheel (as opposed to git install via pip) is recommended as it saves a significant amount of space.
+NOTE: Installing the pre-built wheel (as opposed to git install via pip) is recommended as it saves a significant amount of space.
 
 This will add the `ve-mqtt` executable to `~/.local/bin`.
 
 ### Run the code:
 ```text
 $ ve-mqtt -h
-usage: ve-mqtt [-h] --tty TTY --device DEVICE [-v] [--timeout TIMEOUT] --broker BROKER
-               [--port PORT] [--username USERNAME] [--password PASSWORD] [--mqttretry MQTTRETRY] [--tls] [--tls1.2]
-               [--ca_path CA_PATH]
+Welcome to asyncio_vedirect_mqtt v1.1.3
+usage: ve-mqtt [-h] --tty TTY [--windowing WINDOWING] --device DEVICE [-v] [--timeout TIMEOUT] --broker BROKER [--port PORT] [--username USERNAME] [--password PASSWORD] [--mqttretry MQTTRETRY] [--tls] [--tls1.2] [--ca_path CA_PATH]
 
 Async implementation of ve.direct to mqtt
 
-options:
-  -h, --help             show this help message and exit
-  --tty TTY              Serial port with incoming ve.direct data
-  --device DEVICE        Unique name of the device
-  -v, --verbose          Run with verbose logging
-  --timeout TIMEOUT      Serial port read timeout
-  --broker BROKER        MQTT broker hostname
-  --port PORT            MQTT broker port
-  --username USERNAME    MQTT broker username
-  --password PASSWORD    MQTT broker password
-  --mqttretry MQTTRETRY  MQTT broker reconnect timeout interval
-  --tls                  Use TLS for MQTT communication
-  --tls1.2               Use TLS version 1.2 for MQTT communication
-  --ca_path CA_PATH      Custom TLS CA path
-
-
+optional arguments:
+  -h, --help            show this help message and exit
+  --tty TTY             Serial port with incoming ve.direct data
+  --windowing WINDOWING
+                        How many values should be included in the sliding moving average
+  --device DEVICE       Unique name of the device
+  -v, --verbose         Run with verbose logging
+  --timeout TIMEOUT     Serial port read timeout
+  --broker BROKER       MQTT broker hostname
+  --port PORT           MQTT broker port
+  --username USERNAME   MQTT broker username
+  --password PASSWORD   MQTT broker password
+  --mqttretry MQTTRETRY
+                        MQTT broker reconnect timeout interval
+  --tls                 Use TLS for MQTT communication
+  --tls1.2              Use TLS version 1.2 for MQTT communication
+  --ca_path CA_PATH     Custom TLS CA path
 ```
 
 ## System service
