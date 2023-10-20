@@ -10,7 +10,7 @@ import time
 logger = logging.getLogger(__name__)
 
 class AsyncIOVeDirectMqtt:
-    def __init__(self, tty, device, broker, *args, tls_protocol=None, port=1883, username=None, password=None, mqttretry=30, verbose=False, timeout=60,
+    def __init__(self, tty, device, broker, *args, tls_protocol=None, windowing=60, port=1883, username=None, password=None, mqttretry=30, verbose=False, timeout=60,
                  ca_path=None, **kwargs):
         self.tty = tty
         self.device_name = device
@@ -20,6 +20,7 @@ class AsyncIOVeDirectMqtt:
         self.password = password
         self.mqttretry = mqttretry
         self.verbose = verbose
+        self.windowing=windowing
         self.mqtt_exception = None
         self.ve_connection = AsyncIOVeDirect(tty, timeout)
         self.ssl_context = ssl.SSLContext(tls_protocol) if tls_protocol else None
@@ -39,7 +40,7 @@ class AsyncIOVeDirectMqtt:
             device_class="energy",
             state_class="total_increasing",
             multiplier=0.01,
-            mov_avg=60
+            mov_avg=self.windowing
         )
         self.sensor_mapping["H20"] = Sensor(
             mqtt_client,
@@ -50,7 +51,7 @@ class AsyncIOVeDirectMqtt:
             device_class="energy",
             state_class="total_increasing",
             multiplier=0.01,
-            mov_avg=60
+            mov_avg=self.windowing
         )
         self.sensor_mapping["V"] = Sensor(
             mqtt_client,
@@ -61,7 +62,7 @@ class AsyncIOVeDirectMqtt:
             device_class="voltage",
             state_class="measurement",
             multiplier=0.001,
-            mov_avg=60
+            mov_avg=self.windowing
         )
         self.sensor_mapping["VPV"] = Sensor(
             mqtt_client,
@@ -72,7 +73,7 @@ class AsyncIOVeDirectMqtt:
             device_class="voltage",
             state_class="measurement",
             multiplier=0.001,
-            mov_avg=60
+            mov_avg=self.windowing
         )
         self.sensor_mapping["I"] = Sensor(
             mqtt_client,
@@ -83,7 +84,7 @@ class AsyncIOVeDirectMqtt:
             device_class="current",
             state_class="measurement",
             multiplier=0.001,
-            mov_avg=60
+            mov_avg=self.windowing
         )
         self.sensor_mapping["IL"] = Sensor(
             mqtt_client,
@@ -94,7 +95,7 @@ class AsyncIOVeDirectMqtt:
             device_class="current",
             state_class="measurement",
             multiplier=0.001,
-            mov_avg=60
+            mov_avg=self.windowing
         )
         self.sensor_mapping["PPV"] = Sensor(
             mqtt_client,
@@ -104,7 +105,7 @@ class AsyncIOVeDirectMqtt:
             unit_of_measurement="W",
             device_class="power",
             state_class="measurement",
-            mov_avg=60
+            mov_avg=self.windowing
         )
         for key in self.sensor_mapping.keys():
             await self.sensor_mapping[key].publish_discovery()
